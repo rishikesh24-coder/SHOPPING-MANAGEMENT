@@ -77,7 +77,20 @@ router.get('/:id', async (req, res) => {
 // ============================================================
 router.post('/', authenticateToken, async (req, res) => {
     try {
-        const { name, category, price, quantity, description } = req.body;
+        const {
+            name,
+            category,
+            price,
+            quantity,
+            description,
+            brand = '',
+            mrp = null,
+            discount_percent = null,
+            image = '',
+            rating = 4.5,
+            review_count = 100,
+            badge = null
+        } = req.body;
 
         // Validation
         if (!name || !category || price === undefined || quantity === undefined) {
@@ -89,6 +102,10 @@ router.post('/', authenticateToken, async (req, res) => {
 
         const parsedPrice = parseFloat(price);
         const parsedQuantity = parseInt(quantity, 10);
+        const parsedMrp = mrp !== null && mrp !== undefined ? parseFloat(mrp) : Math.round(parsedPrice * 1.25);
+        const calculatedDiscount = discount_percent !== null && discount_percent !== undefined
+            ? parseInt(discount_percent, 10)
+            : Math.max(0, Math.round(((parsedMrp - parsedPrice) / parsedMrp) * 100));
 
         if (isNaN(parsedPrice) || parsedPrice < 0) {
             return res.status(400).json({
@@ -106,14 +123,21 @@ router.post('/', authenticateToken, async (req, res) => {
 
         // SQL parameterized INSERT
         const sql = `
-            INSERT INTO products (name, category, price, quantity, description)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO products (name, brand, category, price, mrp, discount_percent, quantity, image, rating, review_count, badge, description)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         const values = [
             name.trim(),
+            brand ? brand.trim() : '',
             category.trim(),
             parsedPrice,
+            parsedMrp,
+            calculatedDiscount,
             parsedQuantity,
+            image ? image.trim() : '',
+            parseFloat(rating) || 4.5,
+            parseInt(review_count, 10) || 100,
+            badge ? badge.trim() : null,
             description ? description.trim() : ''
         ];
 
@@ -122,12 +146,20 @@ router.post('/', authenticateToken, async (req, res) => {
         res.status(201).json({
             success: true,
             message: 'Product added successfully!',
+            id: result.insertId,
             data: {
                 id: result.insertId,
                 name: name.trim(),
+                brand: brand ? brand.trim() : '',
                 category: category.trim(),
                 price: parsedPrice,
+                mrp: parsedMrp,
+                discount_percent: calculatedDiscount,
                 quantity: parsedQuantity,
+                image: image ? image.trim() : '',
+                rating: parseFloat(rating) || 4.5,
+                review_count: parseInt(review_count, 10) || 100,
+                badge: badge ? badge.trim() : null,
                 description: description ? description.trim() : ''
             }
         });
@@ -146,12 +178,25 @@ router.post('/', authenticateToken, async (req, res) => {
 // Method: PUT
 // URL:    /api/products/:id
 // Header: Authorization: Bearer <token>
-// Body:   { name, category, price, quantity, description }
+// Body:   { name, category, price, quantity, description, brand, mrp, ... }
 // ============================================================
 router.put('/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, category, price, quantity, description } = req.body;
+        const {
+            name,
+            category,
+            price,
+            quantity,
+            description,
+            brand,
+            mrp,
+            discount_percent,
+            image,
+            rating,
+            review_count,
+            badge
+        } = req.body;
 
         if (!name || !category || price === undefined || quantity === undefined) {
             return res.status(400).json({
@@ -170,17 +215,29 @@ router.put('/:id', authenticateToken, async (req, res) => {
             });
         }
 
+        const parsedMrp = mrp !== undefined ? parseFloat(mrp) : Math.round(parsedPrice * 1.25);
+        const calculatedDiscount = discount_percent !== undefined
+            ? parseInt(discount_percent, 10)
+            : Math.max(0, Math.round(((parsedMrp - parsedPrice) / parsedMrp) * 100));
+
         // SQL parameterized UPDATE
         const sql = `
             UPDATE products
-            SET name = ?, category = ?, price = ?, quantity = ?, description = ?
+            SET name = ?, brand = COALESCE(?, brand), category = ?, price = ?, mrp = ?, discount_percent = ?, quantity = ?, image = COALESCE(?, image), rating = COALESCE(?, rating), review_count = COALESCE(?, review_count), badge = ?, description = ?
             WHERE id = ?
         `;
         const values = [
             name.trim(),
+            brand !== undefined ? brand.trim() : null,
             category.trim(),
             parsedPrice,
+            parsedMrp,
+            calculatedDiscount,
             parsedQuantity,
+            image !== undefined ? image.trim() : null,
+            rating !== undefined ? parseFloat(rating) : null,
+            review_count !== undefined ? parseInt(review_count, 10) : null,
+            badge !== undefined ? badge : null,
             description ? description.trim() : '',
             id
         ];

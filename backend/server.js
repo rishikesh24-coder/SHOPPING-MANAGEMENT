@@ -14,6 +14,10 @@ require('dotenv').config();
 const { testConnection } = require('./db');
 const productsRouter = require('./routes/products');
 const authRouter = require('./routes/auth');
+const wishlistRouter = require('./routes/wishlist');
+const cartRouter = require('./routes/cart');
+const addressesRouter = require('./routes/addresses');
+const ordersRouter = require('./routes/orders');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -41,6 +45,18 @@ app.use('/api/auth', authRouter);
 
 // Mount product CRUD routes (/api/products)
 app.use('/api/products', productsRouter);
+
+// Mount wishlist routes (/api/wishlist)
+app.use('/api/wishlist', wishlistRouter);
+
+// Mount cart/bag routes (/api/cart)
+app.use('/api/cart', cartRouter);
+
+// Mount address management routes (/api/addresses)
+app.use('/api/addresses', addressesRouter);
+
+// Mount orders routes (/api/orders)
+app.use('/api/orders', ordersRouter);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

@@ -12,14 +12,24 @@
 //   - Interactive Wishlist, Shopping Bag, Quick View Modals
 // ============================================================
 
-// Base API endpoints (auto-adapts if served via port 5000 or file/Live Server)
-const API_BASE_URL = window.location.origin.includes('5000')
-    ? '/api'
-    : 'http://localhost:5000/api';
+// ============================================================
+// BASE API CONFIGURATION
+// ============================================================
+// Single API Base: window.location.origin
+// - Production on Render: https://shopora-w6bv.onrender.com
+//   calls https://shopora-w6bv.onrender.com/api/...
+// - Localhost: http://localhost:5000
+//   calls http://localhost:5000/api/...
+const API_BASE_URL = window.location.origin;
 
-const PRODUCTS_URL = `${API_BASE_URL}/products`;
-const AUTH_URL = `${API_BASE_URL}/auth`;
-const HEALTH_URL = `${API_BASE_URL}/health`;
+const AUTH_BASE = `${API_BASE_URL}/api/auth`;
+const PRODUCTS_BASE = `${API_BASE_URL}/api/products`;
+const HEALTH_BASE = `${API_BASE_URL}/api/health`;
+
+// Maintain endpoint aliases for compatibility
+const AUTH_URL = AUTH_BASE;
+const PRODUCTS_URL = PRODUCTS_BASE;
+const HEALTH_URL = HEALTH_BASE;
 
 // ============================================================
 // GLOBAL APPLICATION STATE
@@ -117,7 +127,7 @@ async function checkInitialAuth() {
     }
 
     try {
-        const response = await fetch(`${AUTH_URL}/me`, {
+        const response = await fetch(`${AUTH_BASE}/me`, {
             headers: {
                 'Authorization': `Bearer ${authToken}`
             }
@@ -405,7 +415,7 @@ async function handleLoginSubmit(e) {
     submitBtn.innerHTML = '<span>AUTHENTICATING...</span>';
 
     try {
-        const response = await fetch(`${AUTH_URL}/login`, {
+        const response = await fetch(`${AUTH_BASE}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
@@ -481,7 +491,7 @@ async function handleRegisterSubmit(e) {
     submitBtn.innerHTML = '<span>CREATING ACCOUNT...</span>';
 
     try {
-        const response = await fetch(`${AUTH_URL}/register`, {
+        const response = await fetch(`${AUTH_BASE}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, password, confirmPassword })
@@ -548,7 +558,7 @@ async function handleResetPasswordSubmit(e) {
     submitBtn.innerHTML = '<span>UPDATING...</span>';
 
     try {
-        const response = await fetch(`${AUTH_URL}/reset-password`, {
+        const response = await fetch(`${AUTH_BASE}/reset-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, newPassword, confirmNewPassword })
@@ -860,7 +870,7 @@ function handleProductImageError(imgEl, productId) {
 async function fetchProducts() {
     renderLoadingGrid();
     try {
-        const response = await fetch(PRODUCTS_URL);
+        const response = await fetch(PRODUCTS_BASE);
         const result = await response.json();
 
         if (result.success) {
@@ -931,7 +941,7 @@ async function handleAddProductSubmit(e) {
     submitBtn.textContent = 'Inserting into MySQL...';
 
     try {
-        const response = await fetch(PRODUCTS_URL, {
+        const response = await fetch(PRODUCTS_BASE, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1017,7 +1027,7 @@ async function handleEditProductSubmit(e) {
     submitBtn.textContent = 'Updating MySQL...';
 
     try {
-        const response = await fetch(`${PRODUCTS_URL}/${id}`, {
+        const response = await fetch(`${PRODUCTS_BASE}/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -1073,7 +1083,7 @@ async function handleConfirmDelete() {
     confirmBtn.textContent = 'Deleting...';
 
     try {
-        const response = await fetch(`${PRODUCTS_URL}/${id}`, {
+        const response = await fetch(`${PRODUCTS_BASE}/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${authToken}`
@@ -1874,7 +1884,7 @@ async function checkBackendHealth() {
     const statusFooter = document.getElementById('footer-db-status');
     if (!statusFooter) return;
     try {
-        const response = await fetch(HEALTH_URL);
+        const response = await fetch(HEALTH_BASE);
         if (response.ok) {
             statusFooter.textContent = 'Status: ✅ Backend & MySQL Active';
             statusFooter.style.color = 'var(--success)';

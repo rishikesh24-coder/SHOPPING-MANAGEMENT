@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHOPORA — Modern Shopping, Made Simple</title>
+    <!-- Google Fonts: Assistant (clean editorial e-commerce) & Inter (crisp UI) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- ============================================================ -->
+    <!-- 1. AUTH SCREEN (MANDATORY FIRST SCREEN FOR UNAUTHENTICATED USERS) -->
+    <!-- ============================================================ -->
+    <div id="auth-screen" class="auth-screen">
+        <div class="auth-layout-container">
+            <!-- Left: SHOPORA Branding Section -->
+            <div class="auth-branding-panel">
+                <div class="branding-overlay"></div>
+                <div class="branding-content">
+                    <div class="branding-brand">
+                        <span class="branding-logo-mark">S</span>
+                        <span class="branding-logo-text">SHOPORA</span>
+                    </div>
+                    <h1 class="branding-tagline">"Your style. Your shopping."</h1>
+                    <p class="branding-subtext">Discover curated fashion, cutting-edge electronics, and modern living essentials, backed by verified MySQL inventory.</p>
+                    
+                    <div class="branding-highlights">
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✨</span>
+                            <div>
+                                <strong>Curated Collections</strong>
+                                <p>Handpicked styles across Men, Women &amp; Living</p>
+                            </div>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="highlight-icon">🔒</span>
+                            <div>
+                                <strong>Secure MySQL Auth</strong>
+                                <p>Bcrypt hashing &amp; enterprise JWT encryption</p>
+                            </div>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="highlight-icon">⚡</span>
+                            <div>
+                                <strong>Real-Time Catalog</strong>
+                                <p>Live stock tracking with complete CRUD management</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="branding-footer">
+                        <span>&copy; 2026 SHOPORA. All rights reserved.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Centered Auth Card Panel -->
+            <div class="auth-card-panel">
+                <div class="auth-card-box">
+                    <!-- Mobile Branding Header (visible on mobile/tablet) -->
+                    <div class="auth-mobile-brand">
+                        <div class="brand-logo">
+                            <span class="logo-mark">S</span>
+                            <span class="logo-text">SHOPORA</span>
+                        </div>
+                        <p class="mobile-tagline">"Your style. Your shopping."</p>
+                    </div>
+
+                    <!-- Dynamic Alert Message (Success/Error banners) -->
+                    <div id="auth-alert" class="auth-alert" style="display: none;"></div>
+
+                    <!-- ========================================== -->
+                    <!-- VIEW 1: LOGIN PAGE (Default First Screen)  -->
+                    <!-- ========================================== -->
+                    <div id="auth-login-view" class="auth-view-content active">
+                        <div class="auth-header-block">
+                            <h2 class="auth-title">Welcome Back</h2>
+                            <p class="auth-subtitle">Login to continue shopping</p>
+                        </div>
+
+                        <form id="main-login-form" class="auth-form" novalidate>
+                            <div class="form-group">
+                                <label for="main-login-email">Email Address <span class="req">*</span></label>
+                                <input 
+                                    type="email" 
+                                    id="main-login-email" 
+                                    placeholder="name@example.com" 
+                                    required 
+                                    autocomplete="email"
+                                >
+                                <span class="field-error" id="main-login-email-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="label-with-link">
+                                    <label for="main-login-password">Password <span class="req">*</span></label>
+                                    <button type="button" class="text-link-btn" id="goto-forgot-btn">Forgot Password?</button>
+                                </div>
+                                <div class="password-input-wrap">
+                                    <input 
+                                        type="password" 
+                                        id="main-login-password" 
+                                        placeholder="Enter your password" 
+                                        required 
+                                        autocomplete="current-password"
+                                    >
+                                    <button type="button" class="pw-eye-btn" id="toggle-login-pw" title="Toggle password visibility">👁️</button>
+                                </div>
+                                <span class="field-error" id="main-login-password-error"></span>
+                            </div>
+
+                            <button type="submit" class="btn btn-auth-primary" id="main-login-submit">
+                                <span>LOGIN</span>
+                            </button>
+                        </form>
+
+                        <div class="auth-switch-bar">
+                            <span>Don't have an account?</span>
+                            <button type="button" class="link-highlight" id="goto-register-btn">REGISTER</button>
+                        </div>
+                    </div>
+
+                    <!-- ========================================== -->
+                    <!-- VIEW 2: REGISTER PAGE                       -->
+                    <!-- ========================================== -->
+                    <div id="auth-register-view" class="auth-view-content" style="display: none;">
+                        <div class="auth-header-block">
+                            <h2 class="auth-title">Create Account</h2>
+                            <p class="auth-subtitle">Join SHOPORA to explore curated drops &amp; inventory</p>
+                        </div>
+
+                        <form id="main-register-form" class="auth-form" novalidate>
+                            <div class="form-group">
+                                <label for="main-reg-name">Full Name <span class="req">*</span></label>
+                                <input 
+                                    type="text" 
+                                    id="main-reg-name" 
+                                    placeholder="e.g. Rishikesh Sharma" 
+                                    required 
+                                    autocomplete="name"
+                                >
+                                <span class="field-error" id="main-reg-name-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="main-reg-email">Email Address <span class="req">*</span></label>
+                                <input 
+                                    type="email" 
+                                    id="main-reg-email" 
+                                    placeholder="name@example.com" 
+                                    required 
+                                    autocomplete="email"
+                                >
+                                <span class="field-error" id="main-reg-email-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="main-reg-password">Password <span class="req">*</span></label>
+                                <div class="password-input-wrap">
+                                    <input 
+                                        type="password" 
+                                        id="main-reg-password" 
+                                        placeholder="Minimum 6 characters" 
+                                        required 
+                                        autocomplete="new-password"
+                                    >
+                                    <button type="button" class="pw-eye-btn" id="toggle-reg-pw" title="Toggle password visibility">👁️</button>
+                                </div>
+                                <span class="field-error" id="main-reg-password-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="main-reg-confirm-password">Confirm Password <span class="req">*</span></label>
+                                <div class="password-input-wrap">
+                                    <input 
+                                        type="password" 
+                                        id="main-reg-confirm-password" 
+                                        placeholder="Re-enter your password" 
+                                        required 
+                                        autocomplete="new-password"
+                                    >
+                                    <button type="button" class="pw-eye-btn" id="toggle-reg-cpw" title="Toggle password visibility">👁️</button>
+                                </div>
+                                <span class="field-error" id="main-reg-confirm-password-error"></span>
+                            </div>
+
+                            <button type="submit" class="btn btn-auth-primary" id="main-register-submit">
+                                <span>CREATE ACCOUNT</span>
+                            </button>
+                        </form>
+
+                        <div class="auth-switch-bar">
+                            <span>Already have an account?</span>
+                            <button type="button" class="link-highlight" id="goto-login-from-reg-btn">LOGIN</button>
+                        </div>
+                    </div>
+
+                    <!-- ========================================== -->
+                    <!-- VIEW 3: FORGOT PASSWORD PAGE                -->
+                    <!-- ========================================== -->
+                    <div id="auth-forgot-view" class="auth-view-content" style="display: none;">
+                        <div class="auth-header-block">
+                            <h2 class="auth-title">Reset Password</h2>
+                            <p class="auth-subtitle">Enter your registered email and choose a new password</p>
+                        </div>
+
+                        <form id="main-forgot-form" class="auth-form" novalidate>
+                            <div class="form-group">
+                                <label for="main-forgot-email">Email Address <span class="req">*</span></label>
+                                <input 
+                                    type="email" 
+                                    id="main-forgot-email" 
+                                    placeholder="name@example.com" 
+                                    required 
+                                    autocomplete="email"
+                                >
+                                <span class="field-error" id="main-forgot-email-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="main-forgot-password">New Password <span class="req">*</span></label>
+                                <input 
+                                    type="password" 
+                                    id="main-forgot-password" 
+                                    placeholder="Minimum 6 characters" 
+                                    required
+                                >
+                                <span class="field-error" id="main-forgot-password-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="main-forgot-confirm">Confirm New Password <span class="req">*</span></label>
+                                <input 
+                                    type="password" 
+                                    id="main-forgot-confirm" 
+                                    placeholder="Re-enter new password" 
+                                    required
+                                >
+                                <span class="field-error" id="main-forgot-confirm-error"></span>
+                            </div>
+
+                            <button type="submit" class="btn btn-auth-primary" id="main-forgot-submit">
+                                <span>UPDATE PASSWORD</span>
+                            </button>
+                        </form>
+
+                        <div class="auth-switch-bar">
+                            <span>Remember your password?</span>
+                            <button type="button" class="link-highlight" id="goto-login-from-forgot-btn">Back to Login</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 2. SHOPORA HOMEPAGE (PROTECTED: ONLY ACCESSIBLE AFTER LOGIN) -->
+    <!-- ============================================================ -->
+    <div id="shopora-home" class="shopora-home" style="display: none;">
+        <!-- Clean Top Announcement -->
+        <div class="top-announcement">
+            <div class="ticker-content">
+                <span>⚡ Free Express Delivery on orders above ₹799</span>
+                <span class="ticker-dot">•</span>
+                <span>🔒 100% Genuine Brands Backed by MySQL</span>
+                <span class="ticker-dot">•</span>
+                <span>🎉 Use Code <strong>SHOPORA15</strong> for 15% OFF</span>
+            </div>
+        </div>
+
+        <!-- Clean Main Header -->
+        <header class="shopora-header" id="main-header">
+            <div class="header-inner">
+                <!-- Brand Logo -->
+                <a href="#" class="brand-logo" id="logo-link">
+                    <span class="logo-mark">S</span>
+                    <span class="logo-text">SHOPORA</span>
+                </a>
+
+                <!-- Clean Navigation Bar: MEN, WOMEN, KIDS, HOME, BEAUTY, ELECTRONICS, OFFERS -->
+                <nav class="nav-categories" aria-label="Main Navigation">
+                    <button class="nav-cat-btn active" data-category="all">ALL</button>
+                    <button class="nav-cat-btn" data-category="MEN">MEN</button>
+                    <button class="nav-cat-btn" data-category="WOMEN">WOMEN</button>
+                    <button class="nav-cat-btn" data-category="KIDS">KIDS</button>
+                    <button class="nav-cat-btn" data-category="HOME">HOME</button>
+                    <button class="nav-cat-btn" data-category="BEAUTY">BEAUTY</button>
+                    <button class="nav-cat-btn" data-category="ELECTRONICS">ELECTRONICS</button>
+                    <button class="nav-cat-btn" data-category="OFFERS">OFFERS</button>
+                </nav>
+
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input 
+                            type="text" 
+                            id="global-search" 
+                            placeholder="Search for products, brands and more" 
+                            aria-label="Search catalog"
+                            autocomplete="off"
+                        >
+                        <button id="search-clear-btn" class="search-clear-btn" style="display: none;">&times;</button>
+                    </div>
+                </div>
+
+                <!-- Right Action Icons: Profile, Wishlist, Bag -->
+                <div class="header-actions">
+                    <!-- User Profile Dropdown -->
+                    <div class="action-item profile-dropdown-wrapper" id="profile-action">
+                        <button class="action-btn" id="profile-btn" aria-haspopup="true">
+                            <span class="action-icon">👤</span>
+                            <span class="action-label" id="profile-btn-label">Profile</span>
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div class="profile-dropdown-menu" id="profile-dropdown">
+                            <!-- Populated dynamically by script.js -->
+                        </div>
+                    </div>
+
+                    <!-- Wishlist -->
+                    <div class="action-item">
+                        <button class="action-btn" id="wishlist-btn" title="View Wishlist">
+                            <span class="action-icon">♡</span>
+                            <span class="badge-count" id="wishlist-badge">0</span>
+                            <span class="action-label">Wishlist</span>
+                        </button>
+                    </div>
+
+                    <!-- Shopping Bag -->
+                    <div class="action-item">
+                        <button class="action-btn" id="bag-btn" title="View Shopping Bag">
+                            <span class="action-icon">🛍️</span>
+                            <span class="badge-count" id="bag-badge">0</span>
+                            <span class="action-label">Bag</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Homepage Content -->
+        <main class="home-main">
+            <!-- 1. HERO BANNER -->
+            <section class="hero-section" aria-label="Featured Hero">
+                <div class="hero-container">
+                    <div class="hero-banner-card">
+                        <div class="hero-content">
+                            <span class="hero-badge">SUMMER COLLECTION 2026</span>
+                            <h2 class="hero-title">Elevate Your Everyday Style</h2>
+                            <p class="hero-desc">Discover minimalist apparel, flagship audio gear, and contemporary living spaces — tailored for the modern consumer.</p>
+                            <div class="hero-cta-row">
+                                <button class="btn btn-hero-primary" onclick="scrollToCatalog()">SHOP NOW</button>
+                                <button class="btn btn-hero-secondary" onclick="filterByCategory('ELECTRONICS')">EXPLORE TECH</button>
+                            </div>
+                        </div>
+                        <div class="hero-media-wrapper">
+                            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&auto=format&fit=crop&q=80" alt="SHOPORA Featured Look" class="hero-img">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. SHOP BY CATEGORY -->
+            <section class="section category-showcase-section">
+                <div class="section-container">
+                    <div class="section-header">
+                        <h2 class="section-title">SHOP BY CATEGORY</h2>
+                        <p class="section-sub">Explore our curated collections crafted with premium quality</p>
+                    </div>
+
+                    <div class="category-grid">
+                        <div class="cat-card" onclick="filterByCategory('MEN')">
+                            <div class="cat-image-wrapper">
+                                <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80" alt="Men's Collection" loading="lazy">
+                            </div>
+                            <div class="cat-info">
+                                <h3>MEN</h3>
+                                <p>Shirts, Tees &amp; Streetwear</p>
+                            </div>
+                        </div>
+
+                        <div class="cat-card" onclick="filterByCategory('WOMEN')">
+                            <div class="cat-image-wrapper">
+                                <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=500&auto=format&fit=crop&q=80" alt="Women's Collection" loading="lazy">
+                            </div>
+                            <div class="cat-info">
+                                <h3>WOMEN</h3>
+                                <p>Dresses, Tops &amp; Essentials</p>
+                            </div>
+                        </div>
+
+                        <div class="cat-card" onclick="filterByCategory('ELECTRONICS')">
+                            <div class="cat-image-wrapper">
+                                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=80" alt="Electronics" loading="lazy">
+                            </div>
+                            <div class="cat-info">
+                                <h3>ELECTRONICS</h3>
+                                <p>Headphones, Keyboards &amp; Gear</p>
+                            </div>
+                        </div>
+
+                        <div class="cat-card" onclick="filterByCategory('HOME')">
+                            <div class="cat-image-wrapper">
+                                <img src="https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&auto=format&fit=crop&q=80" alt="Home & Kitchen" loading="lazy">
+                            </div>
+                            <div class="cat-info">
+                                <h3>HOME</h3>
+                                <p>Living, Bottles &amp; Furniture</p>
+                            </div>
+                        </div>
+
+                        <div class="cat-card" onclick="filterByCategory('Footwear')">
+                            <div class="cat-image-wrapper">
+                                <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&auto=format&fit=crop&q=80" alt="Footwear" loading="lazy">
+                            </div>
+                            <div class="cat-info">
+                                <h3>FOOTWEAR</h3>
+                                <p>Athletic, Sneakers &amp; Casual</p>
+                            </div>
+                        </div>
+
+                        <div class="cat-card" onclick="filterByCategory('Accessories')">
+                            <div class="cat-image-wrapper">
+                                <img src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=500&auto=format&fit=crop&q=80" alt="Accessories" loading="lazy">
+                            </div>
+                            <div class="cat-info">
+                                <h3>ACCESSORIES</h3>
+                                <p>Sunglasses, Watches &amp; Bags</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. TRENDING PRODUCTS -->
+            <section class="section trending-section" id="trending-section">
+                <div class="section-container">
+                    <div class="section-header-row">
+                        <div>
+                            <h2 class="section-title">TRENDING PRODUCTS</h2>
+                            <p class="section-sub">Top picks and community favorites available now</p>
+                        </div>
+                        <button class="text-link-btn" onclick="scrollToCatalog()">View All &rarr;</button>
+                    </div>
+
+                    <div class="trending-grid" id="trending-grid">
+                        <!-- Populated dynamically with top picks from MySQL -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. ALL PRODUCTS (FULL CATALOG & MANAGEMENT) -->
+            <section class="section catalog-section" id="catalog-section">
+                <div class="section-container">
+                    <div class="catalog-header-bar">
+                        <div class="catalog-heading-group">
+                            <h2 class="section-title">ALL PRODUCTS</h2>
+                            <p class="catalog-count" id="catalog-count-text">Showing live products from MySQL database</p>
+                        </div>
+
+                        <!-- Authenticated Product Action: Add New Product -->
+                        <div class="catalog-top-actions">
+                            <button class="btn btn-add-product" id="open-add-product-btn">
+                                <span class="btn-icon">➕</span>
+                                <span>Add Product</span>
+                            </button>
+                            <button class="btn btn-outline-refresh" id="refresh-catalog-btn" title="Refresh from MySQL">
+                                🔄 Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Clean Filter & Sorting Toolbar -->
+                    <div class="filter-sort-toolbar">
+                        <!-- Category Filter Chips -->
+                        <div class="category-chips-list" id="category-chips">
+                            <button class="chip active" data-cat="all">All Items</button>
+                            <button class="chip" data-cat="Clothing">Clothing</button>
+                            <button class="chip" data-cat="Electronics">Electronics</button>
+                            <button class="chip" data-cat="Footwear">Footwear</button>
+                            <button class="chip" data-cat="Home & Kitchen">Home &amp; Kitchen</button>
+                            <button class="chip" data-cat="Furniture">Furniture</button>
+                            <button class="chip" data-cat="Accessories">Accessories</button>
+                        </div>
+
+                        <!-- Sorting & Stock Controls -->
+                        <div class="sort-controls">
+                            <div class="stock-filter-wrapper">
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" id="in-stock-only">
+                                    <span class="checkmark"></span>
+                                    <span class="label-text">In Stock Only</span>
+                                </label>
+                            </div>
+
+                            <div class="sort-select-wrapper">
+                                <label for="sort-select">Sort By:</label>
+                                <select id="sort-select" aria-label="Sort products">
+                                    <option value="recommended">Recommended (Newest)</option>
+                                    <option value="price-low">Price: Low to High</option>
+                                    <option value="price-high">Price: High to Low</option>
+                                    <option value="name-asc">Name: A to Z</option>
+                                    <option value="quantity-high">Stock: Highest</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Grid (MySQL GET /api/products) -->
+                    <div class="product-grid" id="product-grid">
+                        <div class="grid-loading-placeholder">
+                            <div class="loading-spinner"></div>
+                            <p>Fetching real-time inventory from MySQL database...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 5. CLEAN FOOTER -->
+        <footer class="shopora-footer">
+            <div class="footer-container">
+                <div class="footer-col brand-col">
+                    <div class="brand-logo footer-logo">
+                        <span class="logo-mark">S</span>
+                        <span class="logo-text">SHOPORA</span>
+                    </div>
+                    <p class="footer-tagline">"Your style. Your shopping."</p>
+                    <p class="footer-desc">Experience seamless e-commerce powered by Node.js, Express, and MySQL. Featuring full CRUD product management and secure JWT authentication.</p>
+                </div>
+
+                <div class="footer-col">
+                    <h4>SHOP COLLECTIONS</h4>
+                    <ul>
+                        <li><a href="#" onclick="filterByCategory('MEN'); return false;">Men's Fashion</a></li>
+                        <li><a href="#" onclick="filterByCategory('WOMEN'); return false;">Women's Fashion</a></li>
+                        <li><a href="#" onclick="filterByCategory('ELECTRONICS'); return false;">Electronics &amp; Audio</a></li>
+                        <li><a href="#" onclick="filterByCategory('Footwear'); return false;">Footwear &amp; Sneakers</a></li>
+                        <li><a href="#" onclick="filterByCategory('Home & Kitchen'); return false;">Home &amp; Living</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>CUSTOMER CARE</h4>
+                    <ul>
+                        <li><a href="#" onclick="showToast('info', 'Customer Support', 'Contact us at support@shopora.com'); return false;">Help &amp; FAQs</a></li>
+                        <li><a href="#" onclick="showToast('info', 'Shipping', 'Track your orders and shipping rates'); return false;">Shipping Info</a></li>
+                        <li><a href="#" onclick="showToast('info', 'Returns', '14-day replacement & refund policy'); return false;">14-Day Returns</a></li>
+                        <li><a href="#" onclick="showToast('info', 'Security', 'Enterprise-grade bcrypt password hashing & JWT encryption'); return false;">Security &amp; Privacy</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>SYSTEM STATUS</h4>
+                    <div class="tech-pill-list">
+                        <span class="tech-pill">Backend: Express &amp; Node.js</span>
+                        <span class="tech-pill">Database: MySQL (online_shopping)</span>
+                        <span class="tech-pill">Security: Bcrypt &amp; JWT</span>
+                    </div>
+                    <p class="db-status-footer" id="footer-db-status">Status: Checking database...</p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-bottom-inner">
+                    <p>&copy; 2026 SHOPORA. All rights reserved.</p>
+                    <div class="footer-bottom-links">
+                        <span>Privacy Policy</span>
+                        <span>•</span>
+                        <span>Terms of Service</span>
+                        <span>•</span>
+                        <span>Security</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODALS & DRAWERS (FOR CRUD & USER INTERACTIONS)               -->
+    <!-- ============================================================ -->
+
+    <!-- ADD PRODUCT MODAL (POST /api/products) -->
+    <div class="modal-backdrop" id="add-product-modal" style="display: none;">
+        <div class="modal-dialog form-dialog" role="dialog" aria-modal="true">
+            <button class="modal-close-btn" id="add-modal-close" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h3>ADD PRODUCT</h3>
+                <p>Inserts a new product into MySQL database via Express REST API</p>
+            </div>
+            <form id="add-product-form" novalidate>
+                <div class="form-group">
+                    <label for="add-product-name">Product Name <span class="req">*</span></label>
+                    <input type="text" id="add-product-name" placeholder="e.g. Wireless Noise-Cancelling Headphones" required maxlength="100">
+                    <span class="field-error" id="add-name-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="add-product-category">Category <span class="req">*</span></label>
+                    <select id="add-product-category" required>
+                        <option value="" disabled selected>-- Select Product Category --</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="Footwear">Footwear</option>
+                        <option value="Home & Kitchen">Home &amp; Kitchen</option>
+                        <option value="Furniture">Furniture</option>
+                        <option value="Accessories">Accessories</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <span class="field-error" id="add-category-error"></span>
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="add-product-price">Price (₹) <span class="req">*</span></label>
+                        <input type="number" id="add-product-price" placeholder="49.99" step="0.01" min="0" required>
+                        <span class="field-error" id="add-price-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-product-quantity">Quantity <span class="req">*</span></label>
+                        <input type="number" id="add-product-quantity" placeholder="25" min="0" step="1" required>
+                        <span class="field-error" id="add-quantity-error"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="add-product-desc">Description</label>
+                    <textarea id="add-product-desc" rows="3" placeholder="Highlight key features, material, or specifications (max 255 chars)" maxlength="255"></textarea>
+                    <span class="char-count" id="add-char-count">0 / 255</span>
+                </div>
+
+                <div class="modal-footer-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddProductModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary-accent" id="add-submit-btn">ADD PRODUCT</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT PRODUCT MODAL (PUT /api/products/:id) -->
+    <div class="modal-backdrop" id="edit-product-modal" style="display: none;">
+        <div class="modal-dialog form-dialog" role="dialog" aria-modal="true">
+            <button class="modal-close-btn" id="edit-modal-close" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h3>EDIT PRODUCT <span id="edit-id-badge" class="id-badge">#0</span></h3>
+                <p>Modifies the existing MySQL record using parameterized SQL UPDATE</p>
+            </div>
+            <form id="edit-product-form" novalidate>
+                <input type="hidden" id="edit-product-id">
+
+                <div class="form-group">
+                    <label for="edit-product-name">Product Name <span class="req">*</span></label>
+                    <input type="text" id="edit-product-name" required maxlength="100">
+                    <span class="field-error" id="edit-name-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-product-category">Category <span class="req">*</span></label>
+                    <select id="edit-product-category" required>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="Footwear">Footwear</option>
+                        <option value="Home & Kitchen">Home &amp; Kitchen</option>
+                        <option value="Furniture">Furniture</option>
+                        <option value="Accessories">Accessories</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <span class="field-error" id="edit-category-error"></span>
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="edit-product-price">Price (₹) <span class="req">*</span></label>
+                        <input type="number" id="edit-product-price" step="0.01" min="0" required>
+                        <span class="field-error" id="edit-price-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-product-quantity">Quantity <span class="req">*</span></label>
+                        <input type="number" id="edit-product-quantity" min="0" step="1" required>
+                        <span class="field-error" id="edit-quantity-error"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-product-desc">Description</label>
+                    <textarea id="edit-product-desc" rows="3" maxlength="255"></textarea>
+                    <span class="char-count" id="edit-char-count">0 / 255</span>
+                </div>
+
+                <div class="modal-footer-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditProductModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary-accent" id="edit-submit-btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- DELETE CONFIRMATION MODAL (DELETE /api/products/:id) -->
+    <div class="modal-backdrop" id="delete-modal" style="display: none;">
+        <div class="modal-dialog confirm-dialog" role="dialog" aria-modal="true">
+            <button class="modal-close-btn" id="delete-modal-close" aria-label="Close modal">&times;</button>
+            <div class="confirm-icon">🗑️</div>
+            <h3>Delete Product?</h3>
+            <p>Are you sure you want to permanently remove <strong id="delete-product-title">this product</strong> from the MySQL database?</p>
+            <p class="warning-text">⚠️ This action cannot be undone.</p>
+            <div class="confirm-actions">
+                <button class="btn btn-secondary" id="cancel-delete-btn">CANCEL</button>
+                <button class="btn btn-danger" id="confirm-delete-btn">DELETE PERMANENTLY</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUICK VIEW MODAL -->
+    <div class="modal-backdrop" id="quick-view-modal" style="display: none;">
+        <div class="modal-dialog quick-view-dialog" role="dialog" aria-modal="true">
+            <button class="modal-close-btn" id="quick-view-close" aria-label="Close modal">&times;</button>
+            <div class="quick-view-grid">
+                <div class="quick-view-media">
+                    <img id="qv-image" src="" alt="Product Image">
+                </div>
+                <div class="quick-view-details">
+                    <span class="qv-category" id="qv-category">CATEGORY</span>
+                    <h2 class="qv-title" id="qv-title">Product Name</h2>
+                    <div class="qv-price-row">
+                        <span class="qv-price" id="qv-price">₹0.00</span>
+                        <span class="qv-stock-badge" id="qv-stock-badge">In Stock</span>
+                    </div>
+                    <p class="qv-desc" id="qv-desc">Full product specifications and details.</p>
+                    <div class="qv-meta">
+                        <p><strong>Product ID:</strong> <span id="qv-id">#0</span></p>
+                        <p><strong>Available Units:</strong> <span id="qv-quantity">0</span></p>
+                        <p><strong>Delivery:</strong> Express shipping available</p>
+                    </div>
+                    <div class="qv-actions">
+                        <button class="btn btn-primary-accent" id="qv-add-to-bag-btn">🛍️ ADD TO BAG</button>
+                        <button class="btn btn-outline" id="qv-wishlist-toggle-btn">♡ WISHLIST</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- USER PROFILE MODAL -->
+    <div class="modal-backdrop" id="profile-modal" style="display: none;">
+        <div class="modal-dialog profile-dialog" role="dialog" aria-modal="true">
+            <button class="modal-close-btn" id="profile-modal-close" aria-label="Close modal">&times;</button>
+            <div class="profile-modal-content">
+                <div class="profile-hero-card">
+                    <div class="profile-avatar" id="profile-avatar-letter">U</div>
+                    <h3 id="profile-display-name">User Name</h3>
+                    <p id="profile-display-email">user@example.com</p>
+                    <span class="role-badge">Verified Member</span>
+                </div>
+
+                <div class="profile-details-list">
+                    <div class="profile-detail-row">
+                        <span class="detail-label">User ID:</span>
+                        <span class="detail-val" id="profile-user-id">#1</span>
+                    </div>
+                    <div class="profile-detail-row">
+                        <span class="detail-label">Member Since:</span>
+                        <span class="detail-val" id="profile-created-at">Active</span>
+                    </div>
+                    <div class="profile-detail-row">
+                        <span class="detail-label">Session:</span>
+                        <span class="detail-val text-success">Active JWT Session</span>
+                    </div>
+                </div>
+
+                <div class="profile-actions-group">
+                    <button class="btn btn-primary-accent" onclick="openAddProductModal(); closeProfileModal();">
+                        ➕ Add New Product
+                    </button>
+                    <button class="btn btn-outline-danger" onclick="logoutUser(); closeProfileModal();">
+                        🚪 Log Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SHOPPING BAG DRAWER -->
+    <div class="drawer-backdrop" id="bag-drawer" style="display: none;">
+        <div class="drawer-panel" role="dialog" aria-modal="true">
+            <div class="drawer-header">
+                <h3>SHOPPING BAG (<span id="drawer-bag-count">0</span>)</h3>
+                <button class="drawer-close-btn" id="bag-drawer-close">&times;</button>
+            </div>
+            <div class="drawer-body" id="bag-drawer-items">
+                <!-- Dynamically populated -->
+            </div>
+            <div class="drawer-footer" id="bag-drawer-footer">
+                <div class="bag-subtotal-row">
+                    <span>Estimated Total:</span>
+                    <strong id="bag-subtotal-price">₹0.00</strong>
+                </div>
+                <button class="btn btn-primary-accent btn-block" onclick="showToast('info', 'Demo Checkout', 'Order simulated! This demonstrates cart state with MySQL products.')">
+                    PROCEED TO CHECKOUT
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WISHLIST DRAWER -->
+    <div class="drawer-backdrop" id="wishlist-drawer" style="display: none;">
+        <div class="drawer-panel" role="dialog" aria-modal="true">
+            <div class="drawer-header">
+                <h3>MY WISHLIST (<span id="drawer-wishlist-count">0</span>)</h3>
+                <button class="drawer-close-btn" id="wishlist-drawer-close">&times;</button>
+            </div>
+            <div class="drawer-body" id="wishlist-drawer-items">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Main JavaScript App -->
+    <script src="script.js"></script>
+</body>
+</html>

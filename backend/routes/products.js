@@ -73,23 +73,22 @@ router.get('/:id', async (req, res) => {
 // Method: POST
 // URL:    /api/products
 // Header: Authorization: Bearer <token>
-// Body:   { name, category, price, quantity, description }
+// Body:   { name, brand, category, price, mrp, quantity, promotional_badge, image_url, description }
 // ============================================================
 router.post('/', authenticateToken, async (req, res) => {
     try {
         const {
             name,
+            brand = '',
             category,
             price,
-            quantity,
-            description,
-            brand = '',
             mrp = null,
-            discount_percent = null,
+            quantity,
+            promotional_badge = null,
+            badge = null,
+            image_url = '',
             image = '',
-            rating = 4.5,
-            review_count = 100,
-            badge = null
+            description = ''
         } = req.body;
 
         // Validation
@@ -103,9 +102,8 @@ router.post('/', authenticateToken, async (req, res) => {
         const parsedPrice = parseFloat(price);
         const parsedQuantity = parseInt(quantity, 10);
         const parsedMrp = mrp !== null && mrp !== undefined ? parseFloat(mrp) : Math.round(parsedPrice * 1.25);
-        const calculatedDiscount = discount_percent !== null && discount_percent !== undefined
-            ? parseInt(discount_percent, 10)
-            : Math.max(0, Math.round(((parsedMrp - parsedPrice) / parsedMrp) * 100));
+        const finalBadge = promotional_badge !== undefined && promotional_badge !== null ? promotional_badge : badge;
+        const finalImage = image_url !== undefined && image_url !== '' ? image_url : image;
 
         if (isNaN(parsedPrice) || parsedPrice < 0) {
             return res.status(400).json({
@@ -121,27 +119,60 @@ router.post('/', authenticateToken, async (req, res) => {
             });
         }
 
-        // SQL parameterized INSERT
-        const sql = `
-            INSERT INTO products (name, brand, category, price, mrp, discount_percent, quantity, image, rating, review_count, badge, description)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `;
+        // Dynamically match available table columns to prevent unknown column errors
+        const [cols] = await pool.query('SHOW COLUMNS FROM products');
+        const colNames = cols.map(c => c.Field);
+
+        const fields = ['name', 'brand', 'category', 'price', 'mrp', 'quantity', 'promotional_badge', 'image_url', 'description'];
         const values = [
             name.trim(),
             brand ? brand.trim() : '',
             category.trim(),
             parsedPrice,
             parsedMrp,
-            calculatedDiscount,
             parsedQuantity,
-            image ? image.trim() : '',
-            parseFloat(rating) || 4.5,
-            parseInt(review_count, 10) || 100,
-            badge ? badge.trim() : null,
+            finalBadge ? finalBadge.trim() : null,
+            finalImage ? finalImage.trim() : '',
             description ? description.trim() : ''
         ];
 
-        const [result] = await pool.query(sql, values);
+        // Also populate legacy columns if present in table
+        if (colNames.includes('image')) {
+            fields.push('image');
+            values.push(finalImage ? finalImage.trim() : '');
+        }
+        if (colNames.includes('badge')) {
+            fields.push('badge');
+            values.push(finalBadge ? finalBadge.trim() : null);
+        }
+        if (colNames.includes('discount_percent')) {
+            fields.push('discount_percent');
+            const discount = Math.max(0, Math.round(((parsedMrp - parsedPrice) / parsedMrp) * 100));
+            values.push(discount);
+        }
+        if (colNames.includes('rating')) {
+            fields.push('rating');
+            values.push(4.5);
+        }
+        if (colNames.includes('review_count')) {
+            fields.push('review_count');
+            values.push(100);
+        }
+
+        // Filter fields/values to only those that actually exist in the table
+        const insertFields = [];
+        const insertValues = [];
+        for (let i = 0; i < fields.length; i++) {
+            if (colNames.includes(fields[i])) {
+                insertFields.push(fields[i]);
+                insertValues.push(values[i]);
+            }
+        }
+
+        const placeholders = insertFields.map(() => '?').join(', ');
+        const sql = `INSERT INTO products (${insertFields.join(', ')}) VALUES (${placeholders})`;
+
+        const [result] = await pool.query(sql, insertValues);
 
         res.status(201).json({
             success: true,
@@ -154,12 +185,9 @@ router.post('/', authenticateToken, async (req, res) => {
                 category: category.trim(),
                 price: parsedPrice,
                 mrp: parsedMrp,
-                discount_percent: calculatedDiscount,
                 quantity: parsedQuantity,
-                image: image ? image.trim() : '',
-                rating: parseFloat(rating) || 4.5,
-                review_count: parseInt(review_count, 10) || 100,
-                badge: badge ? badge.trim() : null,
+                promotional_badge: finalBadge ? finalBadge.trim() : null,
+                image_url: finalImage ? finalImage.trim() : '',
                 description: description ? description.trim() : ''
             }
         });
@@ -178,24 +206,23 @@ router.post('/', authenticateToken, async (req, res) => {
 // Method: PUT
 // URL:    /api/products/:id
 // Header: Authorization: Bearer <token>
-// Body:   { name, category, price, quantity, description, brand, mrp, ... }
+// Body:   { name, brand, category, price, mrp, quantity, promotional_badge, image_url, description }
 // ============================================================
 router.put('/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const {
             name,
+            brand,
             category,
             price,
-            quantity,
-            description,
-            brand,
             mrp,
-            discount_percent,
+            quantity,
+            promotional_badge,
+            badge,
+            image_url,
             image,
-            rating,
-            review_count,
-            badge
+            description
         } = req.body;
 
         if (!name || !category || price === undefined || quantity === undefined) {
@@ -215,32 +242,44 @@ router.put('/:id', authenticateToken, async (req, res) => {
             });
         }
 
-        const parsedMrp = mrp !== undefined ? parseFloat(mrp) : Math.round(parsedPrice * 1.25);
-        const calculatedDiscount = discount_percent !== undefined
-            ? parseInt(discount_percent, 10)
-            : Math.max(0, Math.round(((parsedMrp - parsedPrice) / parsedMrp) * 100));
+        const parsedMrp = mrp !== undefined && mrp !== null ? parseFloat(mrp) : Math.round(parsedPrice * 1.25);
+        const finalBadge = promotional_badge !== undefined ? promotional_badge : badge;
+        const finalImage = image_url !== undefined ? image_url : image;
 
-        // SQL parameterized UPDATE
-        const sql = `
-            UPDATE products
-            SET name = ?, brand = COALESCE(?, brand), category = ?, price = ?, mrp = ?, discount_percent = ?, quantity = ?, image = COALESCE(?, image), rating = COALESCE(?, rating), review_count = COALESCE(?, review_count), badge = ?, description = ?
-            WHERE id = ?
-        `;
-        const values = [
-            name.trim(),
-            brand !== undefined ? brand.trim() : null,
-            category.trim(),
-            parsedPrice,
-            parsedMrp,
-            calculatedDiscount,
-            parsedQuantity,
-            image !== undefined ? image.trim() : null,
-            rating !== undefined ? parseFloat(rating) : null,
-            review_count !== undefined ? parseInt(review_count, 10) : null,
-            badge !== undefined ? badge : null,
-            description ? description.trim() : '',
-            id
-        ];
+        // Check columns in products table
+        const [cols] = await pool.query('SHOW COLUMNS FROM products');
+        const colNames = cols.map(c => c.Field);
+
+        const updatePairs = [];
+        const values = [];
+
+        function addUpdate(col, val) {
+            if (colNames.includes(col)) {
+                updatePairs.push(`${col} = ?`);
+                values.push(val);
+            }
+        }
+
+        addUpdate('name', name.trim());
+        addUpdate('brand', brand !== undefined ? brand.trim() : '');
+        addUpdate('category', category.trim());
+        addUpdate('price', parsedPrice);
+        addUpdate('mrp', parsedMrp);
+        addUpdate('quantity', parsedQuantity);
+        addUpdate('promotional_badge', finalBadge !== undefined ? (finalBadge ? finalBadge.trim() : null) : null);
+        addUpdate('image_url', finalImage !== undefined ? (finalImage ? finalImage.trim() : '') : '');
+        addUpdate('description', description ? description.trim() : '');
+
+        // Legacy columns
+        if (finalImage !== undefined) addUpdate('image', finalImage ? finalImage.trim() : '');
+        if (finalBadge !== undefined) addUpdate('badge', finalBadge ? finalBadge.trim() : null);
+        if (colNames.includes('discount_percent')) {
+            const discount = Math.max(0, Math.round(((parsedMrp - parsedPrice) / parsedMrp) * 100));
+            addUpdate('discount_percent', discount);
+        }
+
+        values.push(id);
+        const sql = `UPDATE products SET ${updatePairs.join(', ')} WHERE id = ?`;
 
         const [result] = await pool.query(sql, values);
 
@@ -257,9 +296,13 @@ router.put('/:id', authenticateToken, async (req, res) => {
             data: {
                 id: Number(id),
                 name: name.trim(),
+                brand: brand !== undefined ? brand.trim() : '',
                 category: category.trim(),
                 price: parsedPrice,
+                mrp: parsedMrp,
                 quantity: parsedQuantity,
+                promotional_badge: finalBadge !== undefined ? (finalBadge ? finalBadge.trim() : null) : null,
+                image_url: finalImage !== undefined ? (finalImage ? finalImage.trim() : '') : '',
                 description: description ? description.trim() : ''
             }
         });

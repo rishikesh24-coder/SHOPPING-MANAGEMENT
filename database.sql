@@ -25,10 +25,12 @@ CREATE TABLE IF NOT EXISTS products (
     mrp DECIMAL(10, 2) DEFAULT NULL,
     discount_percent INT DEFAULT 0,
     quantity INT NOT NULL DEFAULT 0,
+    badge VARCHAR(50) DEFAULT NULL,
+    promotional_badge VARCHAR(100) DEFAULT NULL,
     image VARCHAR(255) DEFAULT '',
+    image_url VARCHAR(1000) DEFAULT '',
     rating DECIMAL(2, 1) DEFAULT 4.5,
     review_count INT DEFAULT 100,
-    badge VARCHAR(50) DEFAULT NULL,
     description VARCHAR(255)
 );
 

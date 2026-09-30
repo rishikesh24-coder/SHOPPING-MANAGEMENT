@@ -20,7 +20,31 @@ const dbConfig = {
 // Create MySQL connection pool
 const pool = mysql.createPool(dbConfig);
 
-// Test database connection
+// Safe migration to ensure products table contains required columns
+async function migrateProductsSchema() {
+    try {
+        const [cols] = await pool.query('SHOW COLUMNS FROM products');
+        const existing = cols.map(c => c.Field.toLowerCase());
+
+        const required = [
+            { name: 'brand', ddl: 'ADD COLUMN brand VARCHAR(100) DEFAULT \'\'' },
+            { name: 'mrp', ddl: 'ADD COLUMN mrp DECIMAL(10,2) DEFAULT NULL' },
+            { name: 'promotional_badge', ddl: 'ADD COLUMN promotional_badge VARCHAR(100) DEFAULT NULL' },
+            { name: 'image_url', ddl: 'ADD COLUMN image_url VARCHAR(1000) DEFAULT \'\'' }
+        ];
+
+        for (const col of required) {
+            if (!existing.includes(col.name)) {
+                await pool.query(`ALTER TABLE products ${col.ddl}`);
+                console.log(`✅ [SCHEMA MIGRATION] Added missing column: ${col.name}`);
+            }
+        }
+    } catch (error) {
+        console.error('⚠️ [SCHEMA MIGRATION ERROR]:', error.message);
+    }
+}
+
+// Test database connection and ensure schema compatibility
 async function testConnection() {
     try {
         const connection = await pool.getConnection();
@@ -33,6 +57,10 @@ async function testConnection() {
         console.log('----------------------------------------------------');
 
         connection.release();
+
+        // Safe auto-migration for required products table columns
+        await migrateProductsSchema();
+
         return true;
 
     } catch (error) {

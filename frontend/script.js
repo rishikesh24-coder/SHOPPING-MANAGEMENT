@@ -951,11 +951,13 @@ async function handleAddProductSubmit(e) {
                 name,
                 brand,
                 category,
-                badge: badge || null,
                 price,
                 mrp,
                 quantity,
-                image,
+                promotional_badge: badge || null,
+                badge: badge || null,
+                image_url: image || '',
+                image: image || '',
                 description
             })
         });
@@ -1037,11 +1039,13 @@ async function handleEditProductSubmit(e) {
                 name,
                 brand,
                 category,
-                badge: badge || null,
                 price,
                 mrp,
                 quantity,
-                image,
+                promotional_badge: badge || null,
+                badge: badge || null,
+                image_url: image || '',
+                image: image || '',
                 description
             })
         });

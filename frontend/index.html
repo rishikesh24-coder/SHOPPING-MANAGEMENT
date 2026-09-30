@@ -380,61 +380,81 @@
                     <div class="category-grid">
                         <div class="cat-card" onclick="filterByCategory('MEN')">
                             <div class="cat-image-wrapper">
-                                <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80" alt="Men's Collection" loading="lazy">
+                                <img src="assets/products/tommy-hilfiger-oxford-shirt.jpg" alt="Men's Collection" loading="lazy">
                             </div>
                             <div class="cat-info">
                                 <h3>MEN</h3>
-                                <p>Shirts, Tees &amp; Streetwear</p>
+                                <p>Shirts, Denim &amp; Formals</p>
                             </div>
                         </div>
 
                         <div class="cat-card" onclick="filterByCategory('WOMEN')">
                             <div class="cat-image-wrapper">
-                                <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=500&auto=format&fit=crop&q=80" alt="Women's Collection" loading="lazy">
+                                <img src="assets/products/zara-tailored-blazer.jpg" alt="Women's Collection" loading="lazy">
                             </div>
                             <div class="cat-info">
                                 <h3>WOMEN</h3>
-                                <p>Dresses, Tops &amp; Essentials</p>
+                                <p>Blazers, Dresses &amp; Ethnic</p>
+                            </div>
+                        </div>
+
+                        <div class="cat-card" onclick="filterByCategory('FOOTWEAR')">
+                            <div class="cat-image-wrapper">
+                                <img src="assets/products/nike-air-force-1-07.jpg" alt="Footwear" loading="lazy">
+                            </div>
+                            <div class="cat-info">
+                                <h3>FOOTWEAR</h3>
+                                <p>Sneakers, Casual &amp; Sports</p>
                             </div>
                         </div>
 
                         <div class="cat-card" onclick="filterByCategory('ELECTRONICS')">
                             <div class="cat-image-wrapper">
-                                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=80" alt="Electronics" loading="lazy">
+                                <img src="assets/products/sony-wh-1000xm5.jpg" alt="Electronics" loading="lazy">
                             </div>
                             <div class="cat-info">
                                 <h3>ELECTRONICS</h3>
-                                <p>Headphones, Keyboards &amp; Gear</p>
+                                <p>Headphones, Audio &amp; Wearables</p>
+                            </div>
+                        </div>
+
+                        <div class="cat-card" onclick="filterByCategory('BEAUTY')">
+                            <div class="cat-image-wrapper">
+                                <img src="assets/products/forest-essentials-soundarya-cream.jpg" alt="Beauty" loading="lazy">
+                            </div>
+                            <div class="cat-info">
+                                <h3>BEAUTY</h3>
+                                <p>Skincare, Serums &amp; Cosmetics</p>
+                            </div>
+                        </div>
+
+                        <div class="cat-card" onclick="filterByCategory('KIDS')">
+                            <div class="cat-image-wrapper">
+                                <img src="assets/products/crocs-kids-classic-clog.jpg" alt="Kids" loading="lazy">
+                            </div>
+                            <div class="cat-info">
+                                <h3>KIDS</h3>
+                                <p>Tees, Dungarees &amp; Footwear</p>
                             </div>
                         </div>
 
                         <div class="cat-card" onclick="filterByCategory('HOME')">
                             <div class="cat-image-wrapper">
-                                <img src="https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&auto=format&fit=crop&q=80" alt="Home & Kitchen" loading="lazy">
+                                <img src="assets/products/philips-digital-air-fryer.jpg" alt="Home & Kitchen" loading="lazy">
                             </div>
                             <div class="cat-info">
                                 <h3>HOME</h3>
-                                <p>Living, Bottles &amp; Furniture</p>
+                                <p>Kitchenware, Living &amp; Decor</p>
                             </div>
                         </div>
 
-                        <div class="cat-card" onclick="filterByCategory('Footwear')">
+                        <div class="cat-card" onclick="filterByCategory('ACCESSORIES')">
                             <div class="cat-image-wrapper">
-                                <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&auto=format&fit=crop&q=80" alt="Footwear" loading="lazy">
-                            </div>
-                            <div class="cat-info">
-                                <h3>FOOTWEAR</h3>
-                                <p>Athletic, Sneakers &amp; Casual</p>
-                            </div>
-                        </div>
-
-                        <div class="cat-card" onclick="filterByCategory('Accessories')">
-                            <div class="cat-image-wrapper">
-                                <img src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=500&auto=format&fit=crop&q=80" alt="Accessories" loading="lazy">
+                                <img src="assets/products/casio-g-shock-ga2100.jpg" alt="Accessories" loading="lazy">
                             </div>
                             <div class="cat-info">
                                 <h3>ACCESSORIES</h3>
-                                <p>Sunglasses, Watches &amp; Bags</p>
+                                <p>Watches, Eyewear &amp; Backpacks</p>
                             </div>
                         </div>
                     </div>
@@ -467,12 +487,8 @@
                             <p class="catalog-count" id="catalog-count-text">Showing live products from MySQL database</p>
                         </div>
 
-                        <!-- Authenticated Product Action: Add New Product -->
+                        <!-- Customer Catalog Action: Refresh -->
                         <div class="catalog-top-actions">
-                            <button class="btn btn-add-product" id="open-add-product-btn">
-                                <span class="btn-icon">➕</span>
-                                <span>Add Product</span>
-                            </button>
                             <button class="btn btn-outline-refresh" id="refresh-catalog-btn" title="Refresh from MySQL">
                                 🔄 Refresh
                             </button>
@@ -484,11 +500,13 @@
                         <!-- Category Filter Chips -->
                         <div class="category-chips-list" id="category-chips">
                             <button class="chip active" data-cat="all">All Items</button>
-                            <button class="chip" data-cat="Clothing">Clothing</button>
-                            <button class="chip" data-cat="Electronics">Electronics</button>
+                            <button class="chip" data-cat="Men">Men</button>
+                            <button class="chip" data-cat="Women">Women</button>
                             <button class="chip" data-cat="Footwear">Footwear</button>
-                            <button class="chip" data-cat="Home & Kitchen">Home &amp; Kitchen</button>
-                            <button class="chip" data-cat="Furniture">Furniture</button>
+                            <button class="chip" data-cat="Electronics">Electronics</button>
+                            <button class="chip" data-cat="Beauty">Beauty</button>
+                            <button class="chip" data-cat="Kids">Kids</button>
+                            <button class="chip" data-cat="Home">Home</button>
                             <button class="chip" data-cat="Accessories">Accessories</button>
                         </div>
 
@@ -598,38 +616,64 @@
                 <p>Inserts a new product into MySQL database via Express REST API</p>
             </div>
             <form id="add-product-form" novalidate>
-                <div class="form-group">
-                    <label for="add-product-name">Product Name <span class="req">*</span></label>
-                    <input type="text" id="add-product-name" placeholder="e.g. Wireless Noise-Cancelling Headphones" required maxlength="100">
-                    <span class="field-error" id="add-name-error"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="add-product-category">Category <span class="req">*</span></label>
-                    <select id="add-product-category" required>
-                        <option value="" disabled selected>-- Select Product Category --</option>
-                        <option value="Electronics">Electronics</option>
-                        <option value="Clothing">Clothing</option>
-                        <option value="Footwear">Footwear</option>
-                        <option value="Home & Kitchen">Home &amp; Kitchen</option>
-                        <option value="Furniture">Furniture</option>
-                        <option value="Accessories">Accessories</option>
-                        <option value="Other">Other</option>
-                    </select>
-                    <span class="field-error" id="add-category-error"></span>
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="add-product-name">Product Name <span class="req">*</span></label>
+                        <input type="text" id="add-product-name" placeholder="e.g. Nike Air Force 1 '07 Sneakers" required maxlength="100">
+                        <span class="field-error" id="add-name-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-product-brand">Brand <span class="req">*</span></label>
+                        <input type="text" id="add-product-brand" placeholder="e.g. Nike, JBL, Levi's" required maxlength="60">
+                        <span class="field-error" id="add-brand-error"></span>
+                    </div>
                 </div>
 
                 <div class="form-row-2">
                     <div class="form-group">
-                        <label for="add-product-price">Price (₹) <span class="req">*</span></label>
-                        <input type="number" id="add-product-price" placeholder="49.99" step="0.01" min="0" required>
+                        <label for="add-product-category">Category <span class="req">*</span></label>
+                        <select id="add-product-category" required>
+                            <option value="" disabled selected>-- Select Product Category --</option>
+                            <option value="Men">Men</option>
+                            <option value="Women">Women</option>
+                            <option value="Footwear">Footwear</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Beauty">Beauty</option>
+                            <option value="Kids">Kids</option>
+                            <option value="Home">Home</option>
+                            <option value="Accessories">Accessories</option>
+                            <option value="Clothing">Clothing</option>
+                            <option value="Furniture">Furniture</option>
+                        </select>
+                        <span class="field-error" id="add-category-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-product-badge">Promotional Badge</label>
+                        <input type="text" id="add-product-badge" placeholder="e.g. BESTSELLER, TRENDING, NEW">
+                    </div>
+                </div>
+
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label for="add-product-price">Selling Price (₹) <span class="req">*</span></label>
+                        <input type="number" id="add-product-price" placeholder="7495.00" step="0.01" min="0" required>
                         <span class="field-error" id="add-price-error"></span>
                     </div>
                     <div class="form-group">
+                        <label for="add-product-mrp">MRP (₹) <span class="req">*</span></label>
+                        <input type="number" id="add-product-mrp" placeholder="9695.00" step="0.01" min="0" required>
+                        <span class="field-error" id="add-mrp-error"></span>
+                    </div>
+                    <div class="form-group">
                         <label for="add-product-quantity">Quantity <span class="req">*</span></label>
-                        <input type="number" id="add-product-quantity" placeholder="25" min="0" step="1" required>
+                        <input type="number" id="add-product-quantity" placeholder="35" min="0" step="1" required>
                         <span class="field-error" id="add-quantity-error"></span>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="add-product-image">Product Image Asset Path / URL</label>
+                    <input type="text" id="add-product-image" placeholder="e.g. assets/products/nike-air-force-1-07.jpg" maxlength="255">
                 </div>
 
                 <div class="form-group">
@@ -657,37 +701,63 @@
             <form id="edit-product-form" novalidate>
                 <input type="hidden" id="edit-product-id">
 
-                <div class="form-group">
-                    <label for="edit-product-name">Product Name <span class="req">*</span></label>
-                    <input type="text" id="edit-product-name" required maxlength="100">
-                    <span class="field-error" id="edit-name-error"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-product-category">Category <span class="req">*</span></label>
-                    <select id="edit-product-category" required>
-                        <option value="Electronics">Electronics</option>
-                        <option value="Clothing">Clothing</option>
-                        <option value="Footwear">Footwear</option>
-                        <option value="Home & Kitchen">Home &amp; Kitchen</option>
-                        <option value="Furniture">Furniture</option>
-                        <option value="Accessories">Accessories</option>
-                        <option value="Other">Other</option>
-                    </select>
-                    <span class="field-error" id="edit-category-error"></span>
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="edit-product-name">Product Name <span class="req">*</span></label>
+                        <input type="text" id="edit-product-name" required maxlength="100">
+                        <span class="field-error" id="edit-name-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-product-brand">Brand <span class="req">*</span></label>
+                        <input type="text" id="edit-product-brand" required maxlength="60">
+                        <span class="field-error" id="edit-brand-error"></span>
+                    </div>
                 </div>
 
                 <div class="form-row-2">
                     <div class="form-group">
-                        <label for="edit-product-price">Price (₹) <span class="req">*</span></label>
+                        <label for="edit-product-category">Category <span class="req">*</span></label>
+                        <select id="edit-product-category" required>
+                            <option value="Men">Men</option>
+                            <option value="Women">Women</option>
+                            <option value="Footwear">Footwear</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Beauty">Beauty</option>
+                            <option value="Kids">Kids</option>
+                            <option value="Home">Home</option>
+                            <option value="Accessories">Accessories</option>
+                            <option value="Clothing">Clothing</option>
+                            <option value="Furniture">Furniture</option>
+                        </select>
+                        <span class="field-error" id="edit-category-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-product-badge">Promotional Badge</label>
+                        <input type="text" id="edit-product-badge">
+                    </div>
+                </div>
+
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label for="edit-product-price">Selling Price (₹) <span class="req">*</span></label>
                         <input type="number" id="edit-product-price" step="0.01" min="0" required>
                         <span class="field-error" id="edit-price-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-product-mrp">MRP (₹) <span class="req">*</span></label>
+                        <input type="number" id="edit-product-mrp" step="0.01" min="0" required>
+                        <span class="field-error" id="edit-mrp-error"></span>
                     </div>
                     <div class="form-group">
                         <label for="edit-product-quantity">Quantity <span class="req">*</span></label>
                         <input type="number" id="edit-product-quantity" min="0" step="1" required>
                         <span class="field-error" id="edit-quantity-error"></span>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-product-image">Product Image Asset Path / URL</label>
+                    <input type="text" id="edit-product-image" maxlength="255">
                 </div>
 
                 <div class="form-group">
@@ -719,30 +789,96 @@
         </div>
     </div>
 
-    <!-- QUICK VIEW MODAL -->
+    <!-- QUICK VIEW MODAL (WITH RATINGS & VERIFIED REVIEWS) -->
     <div class="modal-backdrop" id="quick-view-modal" style="display: none;">
         <div class="modal-dialog quick-view-dialog" role="dialog" aria-modal="true">
             <button class="modal-close-btn" id="quick-view-close" aria-label="Close modal">&times;</button>
             <div class="quick-view-grid">
                 <div class="quick-view-media">
                     <img id="qv-image" src="" alt="Product Image">
+                    <div id="qv-badge-container"></div>
                 </div>
                 <div class="quick-view-details">
-                    <span class="qv-category" id="qv-category">CATEGORY</span>
+                    <div class="qv-header-tags">
+                        <span class="qv-brand-tag" id="qv-brand">BRAND</span>
+                        <span class="qv-category-tag" id="qv-category">CATEGORY</span>
+                    </div>
                     <h2 class="qv-title" id="qv-title">Product Name</h2>
+                    
+                    <div class="qv-rating-summary">
+                        <div class="qv-rating-stars" id="qv-rating-stars">★★★★☆</div>
+                        <span class="qv-rating-num" id="qv-rating-num">4.8</span>
+                        <span class="qv-rating-divider">|</span>
+                        <span class="qv-review-count" id="qv-review-count">1,869 Reviews</span>
+                        <span class="qv-source-pill" id="qv-source-pill">Source: Official Product Benchmark</span>
+                    </div>
+
                     <div class="qv-price-row">
                         <span class="qv-price" id="qv-price">₹0.00</span>
+                        <span class="qv-mrp" id="qv-mrp">₹0.00</span>
+                        <span class="qv-discount" id="qv-discount">(0% OFF)</span>
                         <span class="qv-stock-badge" id="qv-stock-badge">In Stock</span>
                     </div>
+
                     <p class="qv-desc" id="qv-desc">Full product specifications and details.</p>
-                    <div class="qv-meta">
-                        <p><strong>Product ID:</strong> <span id="qv-id">#0</span></p>
-                        <p><strong>Available Units:</strong> <span id="qv-quantity">0</span></p>
-                        <p><strong>Delivery:</strong> Express shipping available</p>
+
+                    <div class="qv-meta-specs">
+                        <div class="qv-spec-item"><strong>Brand:</strong> <span id="qv-spec-brand">Brand</span></div>
+                        <div class="qv-spec-item"><strong>Category:</strong> <span id="qv-spec-cat">Category</span></div>
+                        <div class="qv-spec-item"><strong>Available Stock:</strong> <span id="qv-quantity">0 units</span></div>
+                        <div class="qv-spec-item"><strong>Product SKU:</strong> <span id="qv-id">#0</span></div>
                     </div>
+
                     <div class="qv-actions">
-                        <button class="btn btn-primary-accent" id="qv-add-to-bag-btn">🛍️ ADD TO BAG</button>
-                        <button class="btn btn-outline" id="qv-wishlist-toggle-btn">♡ WISHLIST</button>
+                        <button class="btn btn-primary-accent" id="qv-add-to-bag-btn" type="button">🛍️ ADD TO BAG</button>
+                        <button class="btn btn-outline" id="qv-wishlist-toggle-btn" type="button">♡ WISHLIST</button>
+                    </div>
+
+                    <!-- Customer Reviews & Rating Breakdown -->
+                    <div class="qv-reviews-section">
+                        <div class="qv-reviews-header">
+                            <h3>Customer Ratings &amp; Reviews</h3>
+                            <span class="qv-source-note">ℹ️ Verified catalog benchmarks. Sample customer feedback for academic demonstration.</span>
+                        </div>
+
+                        <div class="qv-rating-breakdown-box">
+                            <div class="qv-overall-box">
+                                <div class="qv-big-score" id="qv-big-score">4.8</div>
+                                <div class="qv-big-stars">★★★★★</div>
+                                <div class="qv-verified-label" id="qv-verified-total">Based on 1,869 ratings</div>
+                            </div>
+                            <div class="qv-breakdown-bars">
+                                <div class="qv-bar-row">
+                                    <span>5 ★</span>
+                                    <div class="qv-progress-bar"><div class="qv-progress-fill" style="width: 74%;"></div></div>
+                                    <span>74%</span>
+                                </div>
+                                <div class="qv-bar-row">
+                                    <span>4 ★</span>
+                                    <div class="qv-progress-bar"><div class="qv-progress-fill" style="width: 17%;"></div></div>
+                                    <span>17%</span>
+                                </div>
+                                <div class="qv-bar-row">
+                                    <span>3 ★</span>
+                                    <div class="qv-progress-bar"><div class="qv-progress-fill" style="width: 5%;"></div></div>
+                                    <span>5%</span>
+                                </div>
+                                <div class="qv-bar-row">
+                                    <span>2 ★</span>
+                                    <div class="qv-progress-bar"><div class="qv-progress-fill" style="width: 2%;"></div></div>
+                                    <span>2%</span>
+                                </div>
+                                <div class="qv-bar-row">
+                                    <span>1 ★</span>
+                                    <div class="qv-progress-bar"><div class="qv-progress-fill" style="width: 2%;"></div></div>
+                                    <span>2%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="qv-reviews-list" id="qv-reviews-list">
+                            <!-- Populated dynamically with product-specific review cards -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -777,13 +913,57 @@
                 </div>
 
                 <div class="profile-actions-group">
-                    <button class="btn btn-primary-accent" onclick="openAddProductModal(); closeProfileModal();">
-                        ➕ Add New Product
+                    <button class="btn btn-primary-accent" onclick="openManageProductsModal(); closeProfileModal();">
+                        ⚙️ Manage Products (Admin)
+                    </button>
+                    <button class="btn btn-outline" onclick="openWishlistDrawer(); closeProfileModal();">
+                        ♡ My Wishlist
                     </button>
                     <button class="btn btn-outline-danger" onclick="logoutUser(); closeProfileModal();">
                         🚪 Log Out
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MANAGE PRODUCTS ADMIN MODAL (CRUD OPERATIONS) -->
+    <div class="modal-backdrop" id="manage-products-modal" style="display: none;">
+        <div class="modal-dialog manage-products-dialog" role="dialog" aria-modal="true">
+            <button class="modal-close-btn" id="manage-products-close" aria-label="Close modal">&times;</button>
+            <div class="manage-modal-header">
+                <div>
+                    <span class="role-badge">Admin Inventory Control</span>
+                    <h2 class="manage-modal-title">Catalog Inventory Management</h2>
+                    <p class="manage-modal-sub">Live MySQL database operations for <span id="admin-catalog-count">32</span> products.</p>
+                </div>
+                <button class="btn btn-primary-accent" id="admin-add-product-btn">
+                    ➕ Add New Product
+                </button>
+            </div>
+
+            <div class="manage-toolbar">
+                <input type="text" id="admin-search-input" placeholder="Search by name, brand, or category..." class="manage-search-input">
+            </div>
+
+            <div class="manage-table-wrapper">
+                <table class="manage-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Image</th>
+                            <th>Product Name &amp; Brand</th>
+                            <th>Category</th>
+                            <th>Price / MRP</th>
+                            <th>Stock</th>
+                            <th>Rating</th>
+                            <th style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-table-body">
+                        <!-- Populated by script.js -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
